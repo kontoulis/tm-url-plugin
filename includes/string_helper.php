@@ -1,4 +1,58 @@
 <?php
+if (!function_exists("strpos_array")) {
+    function strpos_array($haystack, $needles = [], $offset = 0)
+    {
+        for ($i = $offset, $len = strlen($haystack); $i < $len; $i++) {
+            if (in_array($haystack[$i], $needles)) {
+                return $i;
+            }
+        }
+        return false;
+    }
+}
+if (!function_exists("split_chat_links_text")) {
+    /**
+     * Splits the chat to text and links while also grouping texts between links
+     * @param $chat
+     * @return array
+     */
+    function split_chat_links_text($chat)
+    {
+        $results = [];
+        $parts = explode(" ", $chat);
+        $lastLink = -1;
+        foreach ($parts as $i => $part) {
+            if (strpos($part, '$l') === false) {
+                $merged = false;
+                if ($i > 0) {
+                    for ($j = $i - 1; $j > $lastLink; $j--) {
+                        if ($j == $lastLink && $j > 0) {
+                            break;
+                        }
+                        if ($results[$j] != "" & $j != $lastLink) {
+                            $results[$j] .= " " . $part;
+                            $results[$i] = "";
+                            $merged = true;
+                        }
+                    }
+                }
+                if (!$merged) {
+                    $results[$i] = $part;
+                }
+                continue;
+            } else {
+                $lastLink = $i;
+                $results[$i] = $part;
+            }
+        }
+        $results = array_values(
+            array_filter($results, function ($data) {
+                return !empty($data);
+            })
+        );
+        return $results;
+    }
+}
 
 if (!function_exists("remove_emojis")) {
     /**
