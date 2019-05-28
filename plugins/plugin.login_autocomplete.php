@@ -12,10 +12,10 @@ Aseco::registerEvent("onStartup", function($aseco){
     $aseco->pluginsChatReserve[] = '%';
 });
 function loginAutocomplete($aseco, $chat){
+    $pluginsChatReserve =  array_diff($aseco->pluginsChatReserve, ['%']);
     // if % found in chatmessage, handle the login auto completer and nickname feature
-    if (strpos($chat[2], '%') !== false)
+    if (strpos($chat[2], '%') !== false && strpos_array($chat[2], $pluginsChatReserve) === false)
     {
-
         // get playerlist on server once here for later uses
         $aseco->client->query('GetPlayerList', 255, 0, 2);
         $playerListOnServer = $aseco->client->getResponse();
@@ -59,6 +59,10 @@ function loginAutocomplete($aseco, $chat){
                 $chat[2] = str_replace('%'.$realNickMatches[$i], $aseco->getPlayerNick($realNickMatches[$i]).'$z$g$s', $chat[2]);
             }
         }
-        $aseco->client->query('ChatSendServerMessage', '$z$g$s['.$aseco->getPlayerNick($chat[1]).'$z$g$s] '.$chat[2]);
+        if($chat[2][0] === "/"){
+            $aseco->manageCommand($chat);
+        }else {
+            $aseco->client->query('ChatSendServerMessage', '$z$g$s[' . $aseco->getPlayerNick($chat[1]) . '$z$g$s] ' . $chat[2]);
+        }
     }
 }

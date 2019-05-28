@@ -1935,7 +1935,12 @@ class Aseco {
 			$this->client->query('ChatSendServerMessage', '$z$g$s['.$this->getPlayerNick($chat[1]).'$z$g$s] '.$chat[2]);
 		}
 
-		// check for chat command '/' prefix
+		$this->manageCommand($chat);
+
+	}  // playerChat
+
+	// check for chat command '/' prefix
+	function manageCommand($chat){
 		$command = $chat[2];
 		if ($command != '' && $command[0] == '/') {
 			// remove '/' prefix
@@ -1994,7 +1999,7 @@ class Aseco {
 				}
 			}
 		}
-	}  // playerChat
+	}
 
 
 	/**

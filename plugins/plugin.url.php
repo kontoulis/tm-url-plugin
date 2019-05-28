@@ -21,7 +21,7 @@ Aseco::registerEvent("onStartup", function($aseco){
  */
 function processUrl($aseco, $chat)
 {
-    if ($chat[1] === (string)$aseco->server->serverlogin || strpos($chat[2], '$l') === false) {
+    if ($chat[1] === (string)$aseco->server->serverlogin || strpos($chat[2], '$l') === false ) {
         return;
     }
     $chat[2] = preg_replace('/(https\:\/\/)/', 'http://', $chat[2]);
