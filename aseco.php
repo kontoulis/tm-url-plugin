@@ -172,6 +172,7 @@ class Aseco {
 	var $prevsecond;
 	var $uptime;  // XAseco start-up time
 	var $pluginsChatReserve = [];
+	var $chatHandlers = [];
 
 	/**
 	 * Initializes the server.
@@ -1928,10 +1929,13 @@ class Aseco {
 			return;
 
 		// check for https links and replace with http
-		$chat[2] = preg_replace('/(https\:\/\/)/', 'http://', $chat[2]);
-
+//		$chat[2] = preg_replace('/(https\:\/\/)/', 'http://', $chat[2]);
 		// manually forward player messages to server as normal chat message
-		if ($chat[0] != $this->server->id && $chat[2] != '' && $chat[2][0] != '/' && strpos_array($chat[2], $this->pluginsChatReserve) === false) {
+		ksort($this->chatHandlers);
+		foreach($this->chatHandlers as $chatHandler){
+			$chat = $chatHandler->handle($chat);
+		}
+		if ($chat[0] != $this->server->id && $chat[2] != '' && $chat[2][0] != '/') {
 			$this->client->query('ChatSendServerMessage', '$z$g$s['.$this->getPlayerNick($chat[1]).'$z$g$s] '.$chat[2]);
 		}
 
@@ -2559,6 +2563,9 @@ class Aseco {
 		flush();
 	}  // console
 
+	function registerChatHandler($chatHandler, $order = 0){
+		$this->chatHandlers[$order] = $chatHandler;
+	}
 }  // class Aseco
 
 // define process settings
