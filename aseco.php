@@ -2564,7 +2564,26 @@ class Aseco {
 	}  // console
 
 	function registerChatHandler($chatHandler, $order = 0){
-		$this->chatHandlers[$order] = $chatHandler;
+
+		// Intentionally left out of while loop to trigger warnings where needed
+
+		if(!array_key_exists($order, $this->chatHandlers)){
+			$this->chatHandlers[$order] = $chatHandler;
+		}else{
+			trigger_error("Trying to register ". get_class($chatHandler).
+				" on position $order but position is registered for ". get_class($this->chatHandlers[$order]), E_USER_WARNING);
+			$handlerSet = false;
+			while(!$handlerSet){
+				$order++;
+				if(!array_key_exists($order, $this->chatHandlers)) {
+					$this->chatHandlers[$order] = $chatHandler;
+					$handlerSet = true;
+					trigger_error(get_class($chatHandler).
+						" registered on position $order", E_USER_WARNING);
+				}
+			}
+		}
+
 	}
 }  // class Aseco
 
