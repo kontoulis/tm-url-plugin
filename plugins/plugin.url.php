@@ -64,8 +64,8 @@ class UrlChatHandler extends AbstractChatHandler{
             }
             if(!empty($message)){
                 if($results[0] == "/pm"){
-                    var_dump($message, $results[1]);
                     $this->pmLogin($message, $results[1]);
+                    $this->pmLogin($message, $chat[1]);
 
                 }else{
                     $this->aseco->client->query('ChatSendServerMessage', $message);
